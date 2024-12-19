@@ -11,7 +11,7 @@ module.exports = async (filePath) => {
     const jsonData = XLSX.utils.sheet_to_json(sheet);
     const data = jsonData.map((row) => ({
       id: row.id,
-      name: row.Name,
+      name: row.Name.replace(/\s/g, "").trim(),
       parentId: row.parentId,
     }));
     fs.unlinkSync(filePath);
