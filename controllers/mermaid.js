@@ -1,4 +1,4 @@
-const generate = require("../services/mermaid/render");
+const generate = require("../services/plantuml/render");
 
 module.exports = async (req, res) => {
   const response = await generate(req.body.diagram);
