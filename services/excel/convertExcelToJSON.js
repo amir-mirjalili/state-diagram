@@ -47,9 +47,9 @@ skinparam {
 
   data.forEach((item) => {
     diagram += `class ${item.id} {\n`;
-    diagram += ` |** ${item.name || ""}**|\n`;
-    diagram += ` |** ${item.level || ""}**|\n`;
-    diagram += ` |**${item.role || ""}**|\n`;
+    diagram += ` ${item.unit || ""}\n`;
+    diagram += `${item.role || ""}\n`;
+    diagram += `${item.name || ""}\n`;
     diagram += `}\n`;
   });
 
