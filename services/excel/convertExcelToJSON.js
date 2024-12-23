@@ -12,10 +12,11 @@ module.exports = async (filePath) => {
     const jsonData = XLSX.utils.sheet_to_json(sheet);
     const data = jsonData.map((row) => ({
       id: row.ID,
-      name: row.Name || "",
-      role: row.Role || "",
-      unit: row.Unit || "",
-      parentId: row.ParentID || "",
+      name: row.Name,
+      role: row.Role,
+      unit: row.Unit,
+      parentId: row.ParentID,
+      desc: row.Desc,
     }));
 
     fs.unlinkSync(filePath);
@@ -46,11 +47,12 @@ skinparam {
   });
 
   data.forEach((item) => {
-    diagram += `class ${item.id} {\n`;
-    diagram += ` ${item.unit || ""}\n`;
-    diagram += `${item.role || ""}\n`;
-    diagram += `${item.name || ""}\n`;
-    diagram += `}\n`;
+    diagram += `class ${item.id} << <size:18>${item.role || ""}_${
+      item.unit || ""
+    } >> {\n `;
+    diagram += `<size:14> ${item.name || ""}  \n`;
+    diagram += `<size:11> (${item.desc || ""})  \n`;
+    diagram += `}\n hide class circle \n `;
   });
 
   data.forEach((item) => {
@@ -62,7 +64,7 @@ skinparam {
     }
   });
 
-  diagram += `@enduml`;
+  diagram += ` @enduml`;
 
   return diagram;
 };

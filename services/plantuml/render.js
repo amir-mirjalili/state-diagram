@@ -8,7 +8,7 @@ const OUTPUT_DIR = path.join(__dirname, "../../diagrams");
 
 fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 
-module.exports = async (diagram, outputFormat = "png") => {
+module.exports = async (diagram, outputFormat = "svg") => {
   try {
     const timestamp = Date.now();
     const inputPath = path.join(OUTPUT_DIR, `${timestamp}.puml`);
@@ -16,7 +16,7 @@ module.exports = async (diagram, outputFormat = "png") => {
 
     await fs.promises.writeFile(inputPath, diagram);
 
-    await execAsync(`plantuml -tpng ${inputPath} -o ${OUTPUT_DIR}`);
+    await execAsync(`plantuml -tsvg ${inputPath} -o ${OUTPUT_DIR}`);
 
     await fs.promises.unlink(inputPath);
 
