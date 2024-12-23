@@ -33,8 +33,7 @@ const convertToPlantUMLDiagram = (data) => {
   const groupedByParent = {};
   let diagram = `@startuml
 skinparam {
-    defaultFontName "B Titr"
-    defaultFontSize 14
+    defaultFontName "B Nazanin"
 }
 `;
 
@@ -48,9 +47,9 @@ skinparam {
 
   data.forEach((item) => {
     diagram += `class ${item.id} {\n`;
-    diagram += ` |** ${item.name || "نامشخص"}**|\n`;
-    diagram += ` |** ${item.level || "نامشخص"}**|\n`;
-    diagram += ` |**${item.role || "نامشخص"}**|\n`;
+    diagram += ` |** ${item.name || ""}**|\n`;
+    diagram += ` |** ${item.level || ""}**|\n`;
+    diagram += ` |**${item.role || ""}**|\n`;
     diagram += `}\n`;
   });
 
