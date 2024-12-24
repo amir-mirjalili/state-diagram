@@ -47,11 +47,11 @@ skinparam {
   });
 
   data.forEach((item) => {
-    diagram += `class ${item.id} << <size:18>${item.role || ""}_${
+    diagram += `class ${item.id} < <b>${item.role || ""} ${
       item.unit || ""
-    } >> {\n `;
-    diagram += `<size:14> ${item.name || ""}  \n`;
-    diagram += `<size:11> (${item.desc || ""})  \n`;
+    } > {\n `;
+    diagram += `<size:16> ${item.name || ""}  \n`;
+    diagram += `<size:9> (${item.desc || ""})  \n`;
     diagram += `}\n hide class circle \n `;
   });
 
