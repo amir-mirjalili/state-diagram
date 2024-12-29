@@ -17,6 +17,7 @@ module.exports = async (filePath) => {
       unit: row.Unit,
       parentId: row.ParentID,
       desc: row.Desc,
+      level: row.Level,
     }));
 
     fs.unlinkSync(filePath);
@@ -47,11 +48,11 @@ skinparam {
   });
 
   data.forEach((item) => {
-    diagram += `class ${item.id} < <b>${item.role || ""} ${
-      item.unit || ""
-    } > {\n `;
-    diagram += `<size:16> ${item.name || ""}  \n`;
-    diagram += `<size:9> (${item.desc || ""})  \n`;
+    diagram += `class ${item.id} < <b>  ${item.desc || ""}   > {\n `;
+    diagram += `<b><size:18> ${item.role || ""} ${item.unit || ""}  \n`;
+    diagram += `<size:12>                (${item.level})${
+      item.name ? `<size:16>${item.name}` : ""
+    } \n`;
     diagram += `}\n hide class circle \n `;
   });
 
