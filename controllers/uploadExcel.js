@@ -2,7 +2,10 @@ const fs = require("node:fs");
 
 const convertExcelToJSON = require("../services/excel/convertExcelToJSON");
 module.exports = async (req, res) => {
-  const response = await convertExcelToJSON(req.body.file.path);
+  const response = await convertExcelToJSON(
+    req.body.file.path,
+    req.body.outputFormat || "svg"
+  );
   res.sendFile(response.path, (err) => {
     if (err) {
       console.error("Error sending file:", err);

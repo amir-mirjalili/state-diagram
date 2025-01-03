@@ -2,7 +2,7 @@ const XLSX = require("xlsx");
 const generate = require("../plantuml/render");
 const fs = require("node:fs");
 
-module.exports = async (filePath) => {
+module.exports = async (filePath, outputFormat) => {
   try {
     const workbook = XLSX.readFile(filePath);
 
@@ -24,7 +24,7 @@ module.exports = async (filePath) => {
 
     const diagram = convertToPlantUMLDiagram(data);
 
-    return generate(diagram);
+    return generate(diagram, outputFormat);
   } catch (error) {
     console.error("Error processing file:", error);
     throw error;
@@ -48,11 +48,17 @@ skinparam {
   });
 
   data.forEach((item) => {
-    diagram += `class ${item.id} < <b>  ${item.desc || ""}   > {\n `;
-    diagram += `<b><size:18> ${item.role || ""} ${item.unit || ""}  \n`;
-    diagram += `<size:12>                (${item.level})${
-      item.name ? `<size:16>${item.name}` : ""
-    } \n`;
+    diagram += `class ${item.id} < <b>  ${item.desc || ""}   > {\n`;
+    diagram += `<b><size:18> ${(item.role || "")
+      .replace(/-(.+?)(\s|$)/g, `<font:Arial>$1</font>`)
+      .replace(
+        /^(.*)<font:Arial>(.*?)<\/font>(.*)$/g,
+        `<font:Arial>$2 </font> $1$3`
+      )}\n`;
+
+    diagram += `${
+      item.level !== undefined ? `<size:12>                (${item.level})` : ""
+    }${item.name !== undefined ? `<size:16>${item.name}` : ""} \n`;
     diagram += `}\n hide class circle \n `;
   });
 
