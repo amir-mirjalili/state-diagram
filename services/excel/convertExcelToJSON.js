@@ -2,7 +2,7 @@ const XLSX = require("xlsx");
 const generate = require("../plantuml/render");
 const fs = require("node:fs");
 
-module.exports = async (filePath, outputFormat) => {
+module.exports = async (filePath, outputFormat, type) => {
   try {
     const workbook = XLSX.readFile(filePath);
 
@@ -18,11 +18,12 @@ module.exports = async (filePath, outputFormat) => {
       parentId: row.ParentID,
       desc: row.Desc,
       level: row.Level,
+      chartUnit: row.ChartUnit,
     }));
 
     fs.unlinkSync(filePath);
 
-    const diagram = convertToPlantUMLDiagram(data);
+    const diagram = convertToPlantUMLDiagram(data, type);
 
     return generate(diagram, outputFormat);
   } catch (error) {
@@ -31,7 +32,7 @@ module.exports = async (filePath, outputFormat) => {
   }
 };
 
-const convertToPlantUMLDiagram = (data) => {
+const convertToPlantUMLDiagram = (data, type) => {
   const groupedByParent = {};
   let diagram = `@startuml
 skinparam {
@@ -48,20 +49,33 @@ skinparam {
   });
 
   data.forEach((item) => {
-    diagram += `class ${item.id} < <b>  ${item.desc || ""}   > {\n`;
-    diagram += `<b><size:18> ${(item.role || "")
-      .replace(/-(.+?)(\s|$)/g, `<font:Arial>$1</font>`)
-      .replace(
-        /^(.*)<font:Arial>(.*?)<\/font>(.*)$/g,
-        `<font:Arial>$2 </font> $1$3`
-      )}\n`;
+    if (type === "general") {
+      if (item.parentId !== 5 || item.parentId !== 6 || item.parentId !== 7) {
+        diagram += `class ${item.id} < <b>  ${item.desc || ""}   > {\n`;
 
-    diagram += `${
-      item.level !== undefined ? `<size:12>                (${item.level})` : ""
-    }${item.name !== undefined ? `<size:16>${item.name}` : ""} \n`;
+        diagram += `..<b><size:18>${(item.chartUnit || "")
+          .replace(/-(.+?)(\s|$)/g, `<font:Arial>$1</font>`)
+          .replace(
+            /^(.*)<font:Arial>(.*?)<\/font>(.*)$/g,
+            `<font:Arial>$2 </font> $1$3`
+          )}..\n`;
+      }
+    } else {
+      diagram += `class ${item.id} < <b>  ${item.desc || ""}   > {\n`;
+      diagram += `<b><size:18> ${(item.role || "")
+        .replace(/-(.+?)(\s|$)/g, `<font:Arial>$1</font>`)
+        .replace(
+          /^(.*)<font:Arial>(.*?)<\/font>(.*)$/g,
+          `<font:Arial>$2 </font> $1$3`
+        )}\n`;
+      diagram += `${
+        item.level !== undefined
+          ? `<size:12>                (${item.level})`
+          : ""
+      }${item.name !== undefined ? `<size:16>${item.name}` : ""} \n`;
+    }
     diagram += `}\n hide class circle \n `;
   });
-
   data.forEach((item) => {
     if (item.parentId !== 0) {
       const parent = data.find((parentItem) => parentItem.id === item.parentId);
