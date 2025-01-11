@@ -1,8 +1,8 @@
 const express = require("express");
-
+const cors = require("cors");
 const app = express();
 app.use(express.json());
-
+app.use(cors());
 const render = require("./controllers/mermaid");
 const uploadExcel = require("./controllers/uploadExcel");
 const uploadMiddleware = require("./middleware/upload");
