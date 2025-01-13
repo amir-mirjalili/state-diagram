@@ -53,12 +53,12 @@ skinparam {
       if (item.parentId !== 5 || item.parentId !== 6 || item.parentId !== 7) {
         diagram += `class ${item.id} < <b>  ${item.desc || ""}   > {\n`;
 
-        diagram += `..<b><size:18>${(item.chartUnit || "")
+        diagram += `<b><size:18>${(item.chartUnit || "")
           .replace(/-(.+?)(\s|$)/g, `<font:Arial>$1</font>`)
           .replace(
             /^(.*)<font:Arial>(.*?)<\/font>(.*)$/g,
             `<font:Arial>$2 </font> $1$3`
-          )}..\n`;
+          )}\n`;
       }
     } else {
       diagram += `class ${item.id} < <b>  ${item.desc || ""}   > {\n`;
