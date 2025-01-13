@@ -74,7 +74,7 @@ skinparam {
           item.level !== undefined
             ? `<size:12>                (${item.level})`
             : ""
-        }`;
+        }\n`;
       }
     } else {
       diagram += `class ${item.id} < <b>  ${item.desc || ""}   > {\n`;
