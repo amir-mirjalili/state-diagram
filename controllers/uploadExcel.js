@@ -5,7 +5,9 @@ module.exports = async (req, res) => {
   const response = await convertExcelToJSON(
     req.body.file.path,
     req.body.outputFormat || "svg",
-    req.body.type || "general"
+    req.body.type || "general",
+    req.body.fromLevel,
+    req.body.toLevel
   );
   res.sendFile(response.path, (err) => {
     if (err) {

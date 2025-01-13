@@ -2,7 +2,7 @@ const XLSX = require("xlsx");
 const generate = require("../plantuml/render");
 const fs = require("node:fs");
 
-module.exports = async (filePath, outputFormat, type) => {
+module.exports = async (filePath, outputFormat, type, fromLevel, toLevel) => {
   try {
     const workbook = XLSX.readFile(filePath);
 
@@ -19,11 +19,12 @@ module.exports = async (filePath, outputFormat, type) => {
       desc: row.Desc,
       level: row.Level,
       chartUnit: row.ChartUnit,
+      levelNumber: row.LevelNumber,
     }));
 
     fs.unlinkSync(filePath);
 
-    const diagram = convertToPlantUMLDiagram(data, type);
+    const diagram = convertToPlantUMLDiagram(data, type, fromLevel, toLevel);
 
     return generate(diagram, outputFormat);
   } catch (error) {
@@ -32,7 +33,7 @@ module.exports = async (filePath, outputFormat, type) => {
   }
 };
 
-const convertToPlantUMLDiagram = (data, type) => {
+const convertToPlantUMLDiagram = (data, type, fromLevel = 0, toLevel = 9) => {
   const groupedByParent = {};
   let diagram = `@startuml
 skinparam {
@@ -50,7 +51,10 @@ skinparam {
 
   data.forEach((item) => {
     if (type === "general") {
-      if (item.parentId !== 5 || item.parentId !== 6 || item.parentId !== 7) {
+      if (
+        !item.levelNumber ||
+        (item.levelNumber >= fromLevel && item.levelNumber <= toLevel)
+      ) {
         diagram += `class ${item.id} < <b>  ${item.desc || ""}   > {\n`;
 
         diagram += `<b><size:18>${(item.chartUnit || "")
@@ -59,6 +63,7 @@ skinparam {
             /^(.*)<font:Arial>(.*?)<\/font>(.*)$/g,
             `<font:Arial>$2 </font> $1$3`
           )}\n`;
+        diagram += `}\n hide class circle \n `;
       }
     } else if (type === "with-level") {
       if (item.parentId !== 5 || item.parentId !== 6 || item.parentId !== 7) {
@@ -90,13 +95,16 @@ skinparam {
           : ""
       }${item.name !== undefined ? `<size:16>${item.name}` : ""} \n`;
     }
-    diagram += `}\n hide class circle \n `;
   });
   data.forEach((item) => {
     if (item.parentId !== 0) {
-      const parent = data.find((parentItem) => parentItem.id === item.parentId);
-      if (parent) {
-        diagram += `  ${parent.id} -- ${item.id}\n`;
+      if (item.levelNumber >= fromLevel && item.levelNumber <= toLevel) {
+        const parent = data.find(
+          (parentItem) => parentItem.id === item.parentId
+        );
+        if (parent) {
+          diagram += `  ${parent.id} -- ${item.id}\n`;
+        }
       }
     }
   });
